@@ -1,9 +1,10 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.views import View
 
 # Create your views here.
+import nltk
+from nltk.corpus import *
 
-from spacy import *
 
 class TextParser(View):
     """
@@ -11,8 +12,8 @@ class TextParser(View):
     """
 
     def get(self, request):
-        # input_str = request.data['input']
-        # en_nlp = spacy.load('en')
-        # en_doc = en_nlp(input_str)
-        return HttpResponse("This is output.")
-        
+        text = request.GET.get('input', '')
+        tokens = nltk.word_tokenize(text.lower())
+        text = nltk.Text(tokens)
+        tags = nltk.pos_tag(text)
+        return JsonResponse(dict(tags))
